@@ -1,4 +1,4 @@
-﻿EXPORT GenerateCode(algorithm, datasetNames, performance_scores):= FUNCTIONMACRO
+﻿EXPORT GenerateCode(algorithm, datasetNames, performance_scores, c_no_of_elements):= FUNCTIONMACRO
         #DECLARE(source_code)
         #SET(source_code, '');
         #DECLARE(indexs);

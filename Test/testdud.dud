@@ -1,0 +1,74 @@
+﻿/*This is an example plugin template.
+The AUTHOR should be your risk ID, just the name without @risk at the end or RISK/ at the beginning.
+Sometimes ECL IDE does not accurately report all errors encountered when validating a composition.
+the errors can also be found at c:\users\userid\AppData\Local\Temp\err.log
+When incorporated into a composition, the properties for this plugin would be populated as shown:
+INSTANCE MyNewPlugin(Ins002)
+dsInput=^Ins001|dsOutput
+Prefix="myprefix_"
+field1=myname
+field2=100
+field3=VAL1
+END
+*/
+NAME testdud;
+LABEL "New Plugin";
+VERSION "1.0.0";
+AUTHOR "nairvi01";
+CATEGORY CLEAN;
+DESCRIPTION "Sample Plugin Template. This template takes an input dataset and appends three fields. 
+the appended dataset is exposed for downstream plugins to hook into.";
+PERMISSIONS
+VIEW:PUBLIC;
+EDIT:PRIVATE;
+RUN:PUBLIC;
+END
+INPUTS
+STRING Prefix:LABEL("Append Column Prefix"),DEFAULT("append_"),DESCRIPTION("This prefix will be appended to all fields added by this plugin. This allows the same plugin to be chained more than once in a composition without creating field conflicts.");
+DATASET dsInput:MAPBYNAME
+FIELD field1:LABEL("Field to use for appended field 1"), DESCRIPTION("the content of the field selected will be used for appended field 1");
+END
+INT field2:LABEL("Number to put into appended field 2"),DESCRIPTION("This value will be put into field 2");
+ENUM(VAL1="Value 1 Label",VAL2="Value 2 Label",VAL3="Value 3 Label") field3:LABEL("Value to put into appended field 3");
+END
+OUTPUTS
+/*
+this output dataset contains all the fields in the dsInput dataset, plus three additional fields.
+all three fields will have the input prefix prepended to their name.
+the APPEND flag indicates that the data should only be appended to existing records; no existing data should be changed
+and no records removed or added. ECL to validate this will be added to the plugin ecl.
+*/
+DATASET dsOutput(dsInput):PREFIX(INPUTS.Prefix),APPEND
+STRING field1;
+INTEGER field2;
+STRING field3;
+END
+//this dataset is a side effect, not available to downstream plugins
+DATASET field1Stats: SIDE,WUID
+STRING field1_unique_value : FEW;
+INTEGER field1_cnt : FEW;
+END
+END
+GENERATES INLINE
+//this should be in a macro; inline here for reference
+//create a record structure reflecting the record structure of dsOutput
+l_new:=RECORD
+RECORDOF(%dsInput%);
+STRING %Prefix%field1;
+INTEGER %Prefix%field2;
+STRING %Prefix%field3;
+END;
+//export (^e)a dsOutput attribute from the dsInput attribute. 
+//field 1 is set to the value of the content of the input field.
+//field 2 is set to a hardcoded integer value.
+//fieldl 3 is set to the enum value selected, wrapped in single quotes. (^q)
+//The output is persisted. (%^p%) 
+%^edsOutput% := PROJECT(%dsInput%,TRANSFORM(l_new,
+SELF.%Prefix%field1:=LEFT.%field1%;
+SELF.%Prefix%field2:=%field2%;
+SELF.%Prefix%field3:=%^qfield3%;
+SELF:=LEFT) %^p%;
+%^efield1Stats% := TABLE(%dsOutput%,
+{field1_unique_value:=%Prefix%field1, field1_cnt:=COUNT(GROUP)}
+,%Prefix%field1);
+ENDGENERATES

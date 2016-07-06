@@ -9,7 +9,7 @@
         	#IF(%indexs%> r_no_of_elements)	
         		#BREAK
         	#ELSE
-                        #APPEND(source_code, 'result_' + datasetNames[%indexs%] + ' := ' + algorithm + '(' + QualifiedName('Regression.Datasets.', datasetNames[%indexs%]));
+                        #APPEND(source_code, 'result_' + datasetNames[%indexs%] + 'TS := ' + algorithm + '(' + QualifiedName('Regression.Datasets.', datasetNames[%indexs%]));
                         #APPEND(source_code, ', Regression.Datasets.' + datasetNames[%indexs%] + '.betas);\n');
                         #SET(indexs,%indexs%+1);
                 #END

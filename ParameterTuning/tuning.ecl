@@ -58,7 +58,7 @@ numberFormat := RECORD
 		REAL result;
 	END;
 result := PROJECT(grid, TRANSFORM(numberFormat, 
-                                SELF.result := PLhelper.RunRandomForestClassfier(trainIndepData, trainDepData, tuneIndepData, tuneDepData, LEFT.v1, 7, 1.0, 100);
+                                SELF.result := PLhelper.RunRandomForestClassfier(trainIndepData, trainDepData, tuneIndepData, tuneDepData, LEFT.v1, 3, 1.0, 100);
                                 SELF := LEFT;
                         ));
 OUTPUT(result);
