@@ -1,0 +1,36 @@
+﻿NAME MLComposition;
+LABEL "MLComposition";
+AUTHOR "NairVi01";
+VERSION "1.0.0";
+DESCRIPTION "Sample composition for a machine learning applications";
+
+PERMISSIONS
+VIEW:PUBLIC;
+EDIT:PRIVATE;
+RUN:PRIVATE;
+END
+
+INSTANCE HIPIE_Plugins.UseDataset.UseDataset(Ins001)
+        LogicalFilename="~vivek::c_ecolids.csv"
+        Method=CSV
+        HasHeader=False
+        HeaderRows=1
+        FieldSeparator=","
+        Encrypt=False
+        Structure= INTEGER|id,REAL|field1,REAL|field2,REAL|field3,REAL|field4,REAL|field5,REAL|field6,REAL|field7,REAL|field8,REAL|field9,INTEGER|class
+END
+  
+INSTANCE HIPIE_Plugins.MLPlugins.MLSplitDatasets(Ins002)
+        dsInput=^Ins001|dsOutput
+END
+
+INSTANCE HIPIE_Plugins.MLPlugins.MLRandomForest(Ins003)
+        dsTraining=^Ins002|dsTraining
+        dsTesting=^Ins002|dsTesting
+END
+ 
+INSTANCE HIPIE_Plugins.OutDataset.OutDataset(Ins004)
+        dsInput=^Ins003|accuracy
+        name="~VN::resultfile"
+        Method=THOR
+END

@@ -1,0 +1,69 @@
+﻿
+NAME MLRandomForest;
+LABEL "MLRandomForest";
+VERSION "1.0.0";
+AUTHOR "NairVi01";
+CATEGORY CLEAN;
+DESCRIPTION "This template takes an training and testing set and outputs the accuracy";
+PERMISSIONS
+        VIEW:PUBLIC;
+        EDIT:PRIVATE;
+        RUN:PUBLIC;
+END
+
+INPUTS
+        DATASET dsTraining END
+        DATASET dsTesting END
+        INT treeNum:LABEL("Number of trees"),DEFAULT(100),DESCRIPTION("The number of trees in the forest");
+        REAL fsNum:LABEL("Feature Number"),DEFAULT(6),DESCRIPTION("The number of features to consider when looking for the best split");
+        REAL Purity:LABEL("Purity"),DEFAULT(1.0),DESCRIPTION("Quality of the Split");
+        INT maxLevel:LABEL("Deapth of trees"),DEFAULT(100),DESCRIPTION("The maximum depth of the tree");
+END
+
+OUTPUTS
+        DATASET model  END
+        DATASET accuracy END
+        DATASET learner : SIDE  END
+        DATASET trainIndepData : SIDE  END
+        DATASET trainDepData : SIDE  END
+        DATASET testIndepData : SIDE  END
+        DATASET testDepData : SIDE  END
+        DATASET result : SIDE  END
+END
+
+GENERATES INLINE
+        IMPORT * FROM ML;
+        IMPORT * FROM TestingSuite.Utils;
+        
+        ToTraining(%dsTraining%, train_data_independent);
+        ToField(train_data_independent, pr_indep);
+        %^etrainIndepData% := pr_indep;
+        
+        IMPORT * FROM ML;
+        IMPORT * FROM TestingSuite.Utils;
+        ToTesting(%dsTraining%, train_data_dependent);
+        ToField(train_data_dependent, pr_dep);
+        %^etrainDepData% := ML.Discretize.ByRounding(pr_dep);
+        
+        IMPORT * FROM ML;
+        IMPORT * FROM TestingSuite.Utils;
+        ToTraining(%dsTesting%, test_data_independent);
+        ToField(test_data_independent, tr_indep);
+        %^etestIndepData% := tr_indep;
+        
+        IMPORT * FROM ML;
+        IMPORT * FROM TestingSuite.Utils;
+        ToTesting(%dsTesting%, test_data_dependent);        
+        ToField(test_data_dependent, tr_dep);
+        %^etestDepData% := ML.Discretize.ByRounding(tr_dep);
+        
+        IMPORT * FROM ML;
+        %^elearner% := Classify.RandomForest(%treeNum%, %fsNum%, %Purity%, %maxLevel%);  
+        %^eresult% := %learner%.LearnC(%trainIndepData%, %trainDepData%); 
+        %^emodel% := %learner%.model(%result%);  
+        class:= %learner%.classifyC(%testIndepData%, %result%); 
+        
+        IMPORT * FROM ML;
+        performance:= Classify.Compare(%testDepData%, class);        
+        %^eaccuracy% := performance.accuracy;
+ENDGENERATES

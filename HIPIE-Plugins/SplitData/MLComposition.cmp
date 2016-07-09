@@ -1,0 +1,33 @@
+﻿NAME MLComposition;
+LABEL "MLComposition";
+AUTHOR "NairVi01";
+VERSION "1.0.0";
+DESCRIPTION "Sample composition for a machine learning applications";
+
+PERMISSIONS
+VIEW:PUBLIC;
+EDIT:PRIVATE;
+RUN:PRIVATE;
+END
+
+INSTANCE HIPIE_Plugins.UseDataset.UseDataset(Ins001)
+        LogicalFilename="~vivek::classification_german.csv"
+        Method=CSV
+        HasHeader=True
+        HeaderRows=1
+        FieldSeparator=","
+        Encrypt=False
+        Structure= STRING|field1,STRING|field2,STRING|field3,STRING|field4,STRING|field5,STRING|field6,STRING|field7,STRING|field8,STRING|field9,STRING|field10,STRING|field11,STRING|field12,STRING|field13,STRING|field14,STRING|field15,STRING|field16,STRING|field17,STRING|field18,STRING|field19,STRING|field20,STRING|field21,STRING|field22,STRING|field23,STRING|field24,STRING|field25
+END
+  
+INSTANCE HIPIE_Plugins.MLPlugins.MLSplitDatasets(Ins002)
+   dsInput=^Ins001|dsOutput
+END
+ 
+INSTANCE HIPIE_Plugins.MLPlugins.MLOutDataset(Ins003)
+        dsInputTraining=^Ins002|dsTraining
+        dsInputTesting=^Ins002|dsTesting        
+        train_name="~VN::trainfile"
+        test_name="~VN::testfile"
+        Method=THOR
+END

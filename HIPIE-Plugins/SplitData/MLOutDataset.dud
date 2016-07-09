@@ -1,0 +1,35 @@
+﻿
+NAME MLOutDataset;
+LABEL "ML Output Dataset";
+VERSION "1.0.0";
+AUTHOR "NairVi01";
+CATEGORY OUTPUT;
+DESCRIPTION "Output a dataset suitable for export to another system. There is a need to output both training and testing dataset";
+PERMISSIONS
+        VIEW:PUBLIC;
+        EDIT:PRIVATE;
+        RUN:PUBLIC;
+END
+
+INPUTS
+        DATASET dsInputTraining;
+        DATASET dsInputTesting;
+        STRING train_name : LABEL("Training Output Dataset");
+        STRING test_name : LABEL("Testing Output Dataset");
+        ENUM(CSV,XML,THOR) Method : LABEL("File Type"),DEFAULT(THOR);
+END
+OUTPUTS
+        ACTION dsOutputTraining;
+        ACTION dsOutputTesting;
+END
+GENERATES INLINE 
+        %^edsOutputTraining% := OUTPUT(%dsInputTraining%,,%^qtrain_name%,%Method%,OVERWRITE);
+        %^edsOutputTesting% := OUTPUT(%dsInputTesting%,,%^qtest_name%,%Method%,OVERWRITE);
+ENDGENERATES
+
+RESOURCES
+        FILE readme:FILENAME("OutDataset_README.txt"),DESCRIPTION("README for this plugin"),LABEL("README");
+        FILE testcomposition:FILENAME("OutDataset_testcmp.txt"),DESCRIPTION("Test composition for running this plugin"),LABEL("Test composition");
+        FILE OutDataset_BuildTestDataset: FILENAME("OutDataset_BuildTestDataset.ecl"),LABEL("BWR to create data for test composition");
+        LOGICALFILE testdata:FILENAME("~qa::outdataset::outdataset::input"), URL("http://10.241.100.157:8010"), DALIIP("10.241.100.157"), CLUSTER("thor100_100cert");
+END
