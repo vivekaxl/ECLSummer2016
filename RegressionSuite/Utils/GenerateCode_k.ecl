@@ -1,4 +1,4 @@
-﻿EXPORT GenerateCode_K(algorithm, datasetNames, clusterNumbers, performance_scores, repeat_no=2):= FUNCTIONMACRO
+﻿EXPORT GenerateCode_K(algorithm, datasetNames, clusterNumbers, performance_scores):= FUNCTIONMACRO
         #DECLARE(source_code)
         #SET(source_code, '');
         #DECLARE(indexs);
@@ -10,7 +10,7 @@
         		#BREAK
         	#ELSE
                         #APPEND(source_code, 'result_' + datasetNames[%indexs%] + ' := ' + algorithm + '(' + QualifiedName('Clustering.Datasets.', datasetNames[%indexs%]));
-                        #APPEND(source_code,','+ repeat_no +',' + clusterNumbers[%indexs%] + ');\n');
+                        #APPEND(source_code,', 1,' + clusterNumbers[%indexs%] + ');\n');
                         #SET(indexs,%indexs%+1);
                 #END
         #END

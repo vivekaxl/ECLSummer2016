@@ -7,8 +7,15 @@ EXPORT PLTypes := MODULE
                 REAL8 step_size;
         END;
         EXPORT indep_de_rec := RECORD
-                UNSIGNED4 individual_id;
-                UNSIGNED4 generation_id;
+                UNSIGNED4 id;
+                INTEGER generation_id;
+                REAL8 indep1;
+                REAL8 indep2;
+                REAL8 indep3;
+                REAL8 indep4;
+        END;
+        EXPORT indep_sway_rec := RECORD
+                UNSIGNED4 id;
                 REAL8 indep1;
                 REAL8 indep2;
                 REAL8 indep3;

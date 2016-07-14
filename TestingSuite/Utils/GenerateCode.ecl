@@ -1,4 +1,4 @@
-﻿EXPORT GenerateCode(algorithm, datasetNames, performance_scores, c_no_of_elements):= FUNCTIONMACRO
+﻿EXPORT GenerateCode(algorithm, datasetNames, performance_scores, c_no_of_elements, repeat_no=2):= FUNCTIONMACRO
         #DECLARE(source_code)
         #SET(source_code, '');
         #DECLARE(indexs);
@@ -7,7 +7,7 @@
         	#IF(%indexs%> c_no_of_elements)	
         		#BREAK
         	#ELSE
-                        #APPEND(source_code, 'result_' + datasetNames[%indexs%] + ' := ' + algorithm + '(' + QualifiedName('Classification.Datasets.', datasetNames[%indexs%]) + ', 2);\n');
+                        #APPEND(source_code, 'result_' + datasetNames[%indexs%] + ' := ' + algorithm + '(' + QualifiedName('Classification.Datasets.', datasetNames[%indexs%]) + ','+ repeat_no + ');\n');
                         #SET(indexs,%indexs%+1);
                 #END
         #END

@@ -69,18 +69,18 @@
 
 
 
-        tuning_range := DATASET([
-                {1, 40, 80, 40},
-                {2, 3, 4, 1},
-                {3, 0.9, 1.0, 0.1},
-                {4, 28, 36, 1}],
-                PLTypes.tuning_range_rec);
+tuning_range := DATASET([
+        {1, 40, 80, 40},
+        {2, 3, 4, 1},
+        {3, 0.9, 1.0, 0.1},
+        {4, 28, 36, 1}],
+        PLTypes.tuning_range_rec);
 
-        OUTPUT(tuning_range(parameter_id=1));
-        EA := DE(tuning_range);
-        zero_pop := EA.generate_population();
-        OUTPUT(zero_pop, NAMED('GEN0'));
-        // first_pop := EA.run_one_generation(zero_pop, 1);
-        // OUTPUT(first_pop, NAMED('GEN1'));
-        final_pop := EA.run_multiple_generation(zero_pop, 20);
-        OUTPUT(final_pop);
+OUTPUT(tuning_range(parameter_id=1));
+EA := DE(tuning_range);
+zero_pop := EA.generate_population();
+OUTPUT(zero_pop, NAMED('GEN0'));
+// first_pop := EA.run_one_generation(zero_pop, 1);
+// OUTPUT(first_pop, NAMED('GEN1'));
+final_pop := EA.run_multiple_generation(zero_pop, 20);
+OUTPUT(final_pop);

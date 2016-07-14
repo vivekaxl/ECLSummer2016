@@ -20,7 +20,7 @@ QualifiedName(prefix, datasetname):=  FUNCTIONMACRO
         RETURN prefix + datasetname + '.content';
 ENDMACRO;
 
-/*
+
 SET OF STRING classificationDatasetNamesD := ['discrete_GermanDS', 'discrete_houseVoteDS',
         'discrete_letterrecognitionDS','discrete_liverDS', 'discrete_satimagesDS',
         'discrete_soybeanDS', 'discrete_VehicleDS'];   
@@ -32,12 +32,17 @@ SET OF REAL rfc_performance_scoresD := [0.748551052155,
                                         0.905047973842, 
                                         0.850413659417, 
                                         0.84263765448 ];
-        
-SET OF STRING clusteringDatasetNames := ['ionek_f_eight_c_sixDS',
+
+
+// For Testing KMeans        
+SET OF STRING clusteringDatasetNames := ['ionek_f_eight_c_sixDS',  
                                         'ionek_f_four_c_fourDS', 
                                         'ionek_f_sixteen_c_eightDS', 
                                         'ionek_f_thirty_two_c_eightDS', 
                                         'ionek_f_two_c_twoDS' ];    
+SET OF INTEGER ClusterNumbers := [6, 4, 8, 8, 2]; 
+SET OF REAL km_performance_scores := [1931.17931337, 127744.452565,965.716935032,3900.11341027,7859.6831514,475.981431328,63550.3353695]; 
+
 
 SET OF STRING classificationDatasetNamesC := ['continious_ecoliDS',
                                                 'continious_glassDS',
@@ -57,7 +62,7 @@ SET OF REAL rfc_performance_scoresC := [0.818382927,
 
 SET OF STRING regressionDatasetNames := ['AbaloneDS', 'friedman1DS', 'friedman2DS', 'friedman3DS', 'housingDS', 'servoDS'];                                                                                
                                         
-SET OF INTEGER ClusterNumbers := [6, 2, 4, 8, 8, 2, 8];   
+  
                                         
 
 SET OF REAL dtc_performance_scores := [0.671,
@@ -69,8 +74,9 @@ SET OF REAL dtc_performance_scores := [0.671,
                                         0.661
                                         ];
 
-SET OF REAL km_performance_scores := [1931.17931337, 127744.452565,965.716935032,3900.11341027,7859.6831514,475.981431328,63550.3353695];
 
+timeseriesDatasetNames := ['default', 'milk', 'barley', 'pigs', 'sheep', 'unemployed'];
+ts_no_of_elements := COUNT(timeseriesDatasetNames);
 
 INTEGER c_no_of_elementsD := COUNT(classificationDatasetNamesD);
 INTEGER c_no_of_elementsC := COUNT(classificationDatasetNamesC);
@@ -89,9 +95,11 @@ SEQUENTIAL(
         OUTPUT(GenerateCode('Classification.TestRandomForestClassificationD',  classificationDatasetNamesD, rfc_performance_scoresD, c_no_of_elementsD), NAMED('Classification_RandomForestD')),
         OUTPUT(GenerateCode('Classification.TestDecisionTreeClassifier',  classificationDatasetNamesD, dtc_performance_scores, c_no_of_elementsD), NAMED('Classification_DecisionTree')),
         OUTPUT(GenerateCode_K('Clustering.TestKmeans', clusteringDatasetNames, ClusterNumbers, km_performance_scores), NAMED('Clustering_KMeans')),
-        OUTPUT(GenerateCode_R('Regression.TestLinearRegression', regressionDatasetNames), NAMED('Regression_LR'))
+        OUTPUT(GenerateCode_R('Regression.TestLinearRegression', regressionDatasetNames), NAMED('Regression_LR')),
+        OUTPUT(GenerateCodeTS('TimeSeries.TestArima', timeseriesDatasetNames), NAMED('ARIMA'))
 );
-*/
-timeseriesDatasetNames := ['default', 'milk', 'barley', 'pigs', 'sheep', 'unemployed'];
-ts_no_of_elements := COUNT(timeseriesDatasetNames);
-GenerateCodeTS('TimeSeries.TestArima', timeseriesDatasetNames);
+
+
+
+                                                                              
+                                        
