@@ -1,5 +1,4 @@
-﻿
-
+﻿IMPORT ML;
 EXPORT MakeGrid(tuning_ranges) := FUNCTIONMACRO
         make_list_rec := RECORD
                 INTEGER id;
@@ -7,7 +6,7 @@ EXPORT MakeGrid(tuning_ranges) := FUNCTIONMACRO
         END;
 
         make_list(REAL low, REAL high, REAL c) := FUNCTION
-                reps := ROUNDUP((high-low)/c) + 1;
+                reps := ((high-low)/c) + 1;
                 a := DATASET(reps, TRANSFORM(make_list_rec, 
                                                         SELF.id := COUNTER;
                                                         SELF.value := (REAL)((REAL)((COUNTER - 1) * c) + low);
@@ -85,5 +84,6 @@ EXPORT MakeGrid(tuning_ranges) := FUNCTIONMACRO
         #APPEND(new_rec_code, ';\n');
         %new_rec_code%;
         result := DATASET(no_of_elements, join_records(COUNTER));
-        RETURN result;
+        ML.ToField(result, nf_result);
+        RETURN nf_result;
 ENDMACRO;

@@ -71,6 +71,15 @@ SWAY(DATASET(PLTypes.tuning_range_rec) t_ranges, REAL CF=0.75, REAL F=0.3) := MO
                 RETURN surviving_split;
         END;
         
+        EXPORT DATASET(ML.Types.NumericField)  run_multiple_splits(DATASET(ML.Types.NumericField) population):= FUNCTION
+                stopping_point :=  (INTEGER)(log(100)/log(2)/2);
+                final_population := LOOP(population,    
+                                        COUNTER <= 3,
+                                        run_one_split(ROWS(LEFT))
+                                        );
+                RETURN final_population;
+        END;
+        
 END;
 
 tuning_range := DATASET([
@@ -83,10 +92,17 @@ tuning_range := DATASET([
 EA := SWAY(tuning_range);
 nf_zero_pop := EA.generate_population(100);
 
-// Change into Field
+EA.run_multiple_splits(nf_zero_pop);
 
-after_first_split := EA.run_one_split(nf_zero_pop);
-OUTPUT(after_first_split, ALL);
+// after_first_split := EA.run_one_split(nf_zero_pop);
+// after_second_split := EA.run_one_split(after_first_split);
+// after_third_split := EA.run_one_split(after_second_split);
+// OUTPUT(after_first_split, ALL);
+// OUTPUT(COUNT(after_first_split));
+// OUTPUT(after_second_split, ALL);
+// OUTPUT(COUNT(after_second_split));
+// OUTPUT(after_third_split, ALL);
+// OUTPUT(COUNT(after_third_split));
 
 
 

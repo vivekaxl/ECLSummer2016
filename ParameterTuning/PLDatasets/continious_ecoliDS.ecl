@@ -1,6 +1,6 @@
 ﻿IMPORT * FROM ML;
-EXPORT ecoliDS := MODULE 
-    EXPORT ecoliRECORD := RECORD
+EXPORT continious_ecoliDS := MODULE 
+    SHARED continious_ecoliRECORD := RECORD
         Types.t_FieldNumber id;
         Types.t_FieldReal mcg;
         Types.t_FieldReal gvh;
@@ -348,5 +348,5 @@ EXPORT ecoliDS := MODULE
         {334, 0.61,0.6,0.48,0.5,0.44,0.39,0.38,7.0},
         {335, 0.59,0.61,0.48,0.5,0.42,0.42,0.37,7.0},
         {336, 0.74,0.74,0.48,0.5,0.31,0.53,0.52,7.0}
-],ecoliRECORD);
+],continious_ecoliRECORD);
 END;
