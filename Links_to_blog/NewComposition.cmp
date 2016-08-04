@@ -36,7 +36,7 @@
  END
  /* If you wanted to add the [example plugin](example-dud-file) into this composition, you would     
    add the below here, and change the dsInput for OutDataset to dsInput=~Ins002|dsOutput */
- INSTANCE MyNewPlugin(Ins002)
+ INSTANCE MyNewPlugin.MyNewPlugin(Ins002)
    dsInput=^Ins001|dsOutput
    PrefixStr="myprefix_"
    field1=FirstName

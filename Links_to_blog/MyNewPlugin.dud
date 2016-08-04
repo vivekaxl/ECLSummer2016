@@ -1,0 +1,108 @@
+  /*This is an example plugin template.
+
+The AUTHOR should be your risk ID, just the name without @risk at the end or RISK/ at the beginning.
+
+Sometimes ECL IDE does not accurately report all errors encountered when validating a composition.
+the errors can also be found at c:\users\userid\AppData\Local\Temp\err.log
+
+When incorporated into a composition, the properties for this plugin would be populated as shown:
+
+INSTANCE MyNewPlugin(Ins002)
+  dsInput=^Ins001|dsOutput
+  PrefixStr="myprefix_"
+  field1=firstname
+  field2=100
+  field3=VAL1
+        firstname_field=FirstName
+        lastname_field=LastName
+END
+*/
+
+NAME MyNewPlugin;
+LABEL "New Plugin";
+VERSION "1.0.0";
+AUTHOR "riskid";
+CATEGORY CLEAN;
+DESCRIPTION "Sample Plugin Template. This template takes an input dataset and appends three fields.
+ the appended dataset is exposed for downstream plugins to hook into.";
+
+PERMISSIONS
+   VIEW:PUBLIC;
+   EDIT:PRIVATE;
+   RUN:PUBLIC;
+END
+
+INPUTS
+   STRING PrefixStr:LABEL("Append Column Prefix"),DEFAULT("append_"),DESCRIPTION("This prefix 
+      will be appended to all fields added by this plugin. This allows the same plugin to 
+      be    chained more than once in a composition without creating field conflicts.");
+   DATASET dsInput:MAPBYNAME
+         FIELD field1:LABEL("Field to use for appended field 1"), DESCRIPTION("the content
+           of the field selected will be used for appended field 1");
+         FIELD firstname_field:LABEL("Field Containing last name data"), DESCRIPTION("the content
+           of the field selected will be concatenated into the fullname field");
+         FIELD lastname_field:LABEL("Field Containing last name data"), DESCRIPTION("the content
+           of the field selected will be concatenated into the fullname field");
+                     FIELD state_field:LABEL("Field Containing state code"), DESCRIPTION("the content
+           of the field selected will be used in the visualizations");
+   END
+   INT field2:LABEL("Number to put into appended field 2"),DESCRIPTION("This value will
+                     be put into field 2");
+   ENUM(VAL1,VAL2,VAL3) field3:LABEL("Value
+       to put into appended field 3");
+END
+
+OUTPUTS
+/*
+ this output dataset contains all the fields in the dsInput dataset, plus three additional fields.
+ all three fields will have the input prefix prepended to their name.
+ the APPEND flag indicates that the data should only be appended to existing records; no
+ existing data should be changed and no records removed or added. ECL to validate this will 
+ be added to the plugin ecl.
+*/
+  DATASET dsOutput(dsInput):PREFIX(INPUTS.PrefixStr),WUID,APPEND
+    STRING field1;
+    INTEGER field2;
+    STRING field3;
+STRING fullname;
+  END
+//this dataset is a side effect, not available to downstream plugins
+  DATASET Field1Stats: SIDE,WUID,SMALL
+     STRING Field1UniqueValue : FEW;
+     INTEGER Field1Count : FEW;
+  END
+ END
+
+ VISUALIZE MyDashboard:TITLE("My Dashboard")
+    CHORO PeopleByStates(dsOutput{state_field,COUNT}):STATE(state_field),WEIGHT(COUNT),TITLE("Number of people by state"),SELECTS(state_field->Details.state_field);
+    TABLE Details(dsOutput):TITLE("Details for a given state"),FILTER(state_field),SORT(fullname);
+ END
+
+ GENERATES INLINE
+ //this should be in a macro; inline here for reference
+
+ //create a record structure reflecting the record structure of dsOutput
+ l_new:=RECORD
+    RECORDOF(%dsInput%);
+    STRING %PrefixStr%field1;
+    INTEGER %PrefixStr%field2;
+    STRING %PrefixStr%field3;
+    STRING %PrefixStr%fullname;
+ END;
+
+//export (^e)a dsOutput attribute from the dsInput attribute.
+//field 1 is set to the value of the content of the input field.
+//field 2 is set to a hardcoded integer value.
+//fieldl 3 is set to the enum value selected, wrapped in single quotes. (^q)
+//The output is persisted. (%^p%)
+%^edsOutput% := PROJECT(%dsInput%[1..1000],TRANSFORM(l_new,
+  SELF.%PrefixStr%field1:=LEFT.%field1%;
+  SELF.%PrefixStr%field2:=%field2%;
+  SELF.%PrefixStr%field3:=%^qfield3%;
+        SELF.%PrefixStr%fullname:=LEFT.%firstname_field% + ' ' + LEFT.%lastname_field%;
+  SELF:=LEFT)) %^p%;
+
+%^eField1Stats% := TABLE(%dsOutput%,
+  {Field1UniqueValue :=%PrefixStr%field1, Field1Count:=COUNT(GROUP)} ,%PrefixStr%field1);
+
+ENDGENERATES
