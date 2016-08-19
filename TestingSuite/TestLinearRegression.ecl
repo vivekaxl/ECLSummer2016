@@ -1,16 +1,12 @@
 ﻿IMPORT Std;
-IMPORT * FROM ML;
-IMPORT ML.Tests.Explanatory as TE;
-IMPORT * FROM ML.Types;
-IMPORT * FROM TestingSuite.Utils;
+IMPORT TS;
+IMPORT ML;
+IMPORT ML.Types;
+IMPORT TestingSuite;
+IMPORT TestingSuite.BenchmarkResults AS BenchmarkResults;
+IMPORT TestingSuite.Utils AS Utils;
 IMPORT TestingSuite.Regression as Regression;
-
-dataset_record := RECORD
-	INTEGER dataset_id;
-	STRING dataset_name;
-	REAL ecl_performance;
-        REAL scikit_learn_performance;
-END;
+IMPORT TestingSuite.BenchmarkResults AS BenchmarkResults;
 
 QualifiedName(prefix, datasetname):=  FUNCTIONMACRO
         RETURN prefix + datasetname + '.content';
@@ -20,7 +16,7 @@ SET OF STRING regressionDatasetNames := ['AbaloneDS'];//, 'friedman1DS', 'friedm
 
 INTEGER r_no_of_elements := COUNT(regressionDatasetNames);
 
-lr_results := GenerateCode_R('Regression.TestLinearRegression', regressionDatasetNames);
+lr_results := Utils.GenerateCode_R('Regression.TestLinearRegression', regressionDatasetNames);
 
 OUTPUT(lr_results, NAMED('Regression_LR'));
 

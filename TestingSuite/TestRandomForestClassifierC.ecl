@@ -1,9 +1,12 @@
 ﻿IMPORT Std;
-IMPORT * FROM ML;
-IMPORT ML.Tests.Explanatory as TE;
-IMPORT * FROM ML.Types;
-IMPORT * FROM TestingSuite.Utils;
+IMPORT TS;
+IMPORT ML;
+IMPORT ML.Types;
+IMPORT TestingSuite;
+IMPORT TestingSuite.BenchmarkResults AS BenchmarkResults;
+IMPORT TestingSuite.Utils;
 IMPORT TestingSuite.Classification as Classification;
+IMPORT TestingSuite.BenchmarkResults AS BenchmarkResults;
 
 dataset_record := RECORD
 	INTEGER dataset_id;
@@ -35,7 +38,7 @@ SET OF REAL rfc_performance_scoresC := [0.818382927,
 
 INTEGER c_no_of_elements := COUNT(classificationDatasetNamesC);
 
-rf_results := GenerateCode('Classification.TestRandomForestClassificationC',  classificationDatasetNamesC, rfc_performance_scoresC, c_no_of_elements);
+rf_results := Utils.GenerateCode('Classification.TestRandomForestClassificationC',  classificationDatasetNamesC, BenchmarkResults.rfc_performance_scores_c, c_no_of_elements);
 
 OUTPUT(rf_results, NAMED('Classification_RandomForestC'));
 

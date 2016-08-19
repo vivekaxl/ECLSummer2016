@@ -1,9 +1,10 @@
 ﻿IMPORT Std;
 IMPORT TS;
-IMPORT * FROM ML;
-IMPORT ML.Tests.Explanatory as TE;
-IMPORT * FROM ML.Types;
-IMPORT * FROM TestingSuite.Utils;
+IMPORT ML;
+IMPORT ML.Types;
+IMPORT TestingSuite;
+IMPORT TestingSuite.BenchmarkResults AS BenchmarkResults;
+IMPORT TestingSuite.Utils AS Utils;
 IMPORT TestingSuite.Classification as Classification;
 IMPORT TestingSuite.Clustering as Clustering;
 IMPORT TestingSuite.Regression as Regression;
@@ -20,19 +21,14 @@ QualifiedName(prefix, datasetname):=  FUNCTIONMACRO
         RETURN prefix + datasetname + '.content';
 ENDMACRO;
 
-
 SET OF STRING classificationDatasetNamesD := ['discrete_houseVoteDS'];
-SET OF REAL rfc_performance_scoresD := [ 0.963527328494];
 
 // For Testing KMeans        
 SET OF STRING clusteringDatasetNames := ['ionek_f_two_c_twoDS' ];    
 SET OF INTEGER ClusterNumbers := [2]; 
-SET OF REAL km_performance_scores := [63550.3353695]; 
 
 SET OF STRING classificationDatasetNamesC := ['continious_ecoliDS'];                                                  
-SET OF REAL rfc_performance_scoresC := [0.818382927];
 SET OF STRING regressionDatasetNames := ['AbaloneDS'];   
-SET OF REAL dtc_performance_scores := [0.671];
 
 
 timeseriesDatasetNames := ['default'];
@@ -44,12 +40,12 @@ INTEGER cluster_no_of_elements := COUNT(clusteringDatasetNames);
 INTEGER r_no_of_elements := COUNT(regressionDatasetNames);
 
 SEQUENTIAL(
-        OUTPUT(GenerateCode('Classification.TestRandomForestClassificationC',  classificationDatasetNamesC, rfc_performance_scoresC, c_no_of_elementsC, 1), NAMED('Classification_RandomForestC')),
-        OUTPUT(GenerateCode('Classification.TestRandomForestClassificationD',  classificationDatasetNamesD, rfc_performance_scoresD, c_no_of_elementsD, 1), NAMED('Classification_RandomForestD')),
-        OUTPUT(GenerateCode('Classification.TestDecisionTreeClassifier',  classificationDatasetNamesD, dtc_performance_scores, c_no_of_elementsD, 1), NAMED('Classification_DecisionTree')),
-        OUTPUT(GenerateCode_K('Clustering.TestKmeans', clusteringDatasetNames, ClusterNumbers, km_performance_scores, 1), NAMED('Clustering_KMeans')),
-        OUTPUT(GenerateCode_R('Regression.TestLinearRegression', regressionDatasetNames), NAMED('Regression_LR')),
-        OUTPUT(GenerateCodeTS('TimeSeries.TestArima', timeseriesDatasetNames), NAMED('ARIMA'))
+        OUTPUT(Utils.GenerateCode('Classification.TestRandomForestClassificationC',  classificationDatasetNamesC, BenchmarkResults.rfc_performance_scores_c, c_no_of_elementsC, 1), NAMED('Classification_RandomForestC')),
+        OUTPUT(Utils.GenerateCode('Classification.TestRandomForestClassificationD',  classificationDatasetNamesD, BenchmarkResults.rfc_performance_scores_d, c_no_of_elementsD, 1), NAMED('Classification_RandomForestD')),
+        OUTPUT(Utils.GenerateCode('Classification.TestDecisionTreeClassifier',  classificationDatasetNamesD, BenchmarkResults.dtc_performance_scores, c_no_of_elementsD, 1), NAMED('Classification_DecisionTree')),
+        OUTPUT(Utils.GenerateCode_K('Clustering.TestKmeans', clusteringDatasetNames, ClusterNumbers, BenchmarkResults.kmeans_performance_scores, 1), NAMED('Clustering_KMeans')),
+        OUTPUT(Utils.GenerateCode_R('Regression.TestLinearRegression', regressionDatasetNames), NAMED('Regression_LR')),
+        OUTPUT(Utils.GenerateCodeTS('TimeSeries.TestArima', timeseriesDatasetNames), NAMED('ARIMA'))
 );
 
 

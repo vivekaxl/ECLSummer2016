@@ -1,5 +1,5 @@
 ﻿IMPORT TS;
-IMPORT * FROM TestingSuite.Utils;
+IMPORT TestingSuite.Utils AS Utils;
 IMPORT TestingSuite.TimeSeries as TimeSeries;
 
 dataset_record := RECORD
@@ -15,4 +15,4 @@ ENDMACRO;
 
 timeseriesDatasetNames := ['default', 'milk', 'barley', 'pigs', 'sheep', 'unemployed'];
 ts_no_of_elements := COUNT(timeseriesDatasetNames);
-GenerateCodeTS('TimeSeries.TestArima', timeseriesDatasetNames);
+Utils.GenerateCodeTS('TimeSeries.TestArima', timeseriesDatasetNames);

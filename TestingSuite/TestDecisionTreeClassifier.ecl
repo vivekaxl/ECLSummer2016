@@ -1,25 +1,22 @@
 ﻿IMPORT Std;
-IMPORT * FROM ML;
-IMPORT ML.Tests.Explanatory as TE;
-IMPORT * FROM ML.Types;
-IMPORT * FROM TestingSuite.Utils;
+IMPORT TS;
+IMPORT ML;
+IMPORT ML.Types;
+IMPORT TestingSuite;
+IMPORT TestingSuite.BenchmarkResults AS BenchmarkResults;
+IMPORT TestingSuite.Utils AS Utils;
 IMPORT TestingSuite.Classification as Classification;
+IMPORT TestingSuite.BenchmarkResults AS BenchmarkResults;
 
-dataset_record := RECORD
-	INTEGER dataset_id;
-	STRING dataset_name;
-	REAL ecl_performance;
-        REAL scikit_learn_performance;
-END;
 
 QualifiedName(prefix, datasetname):=  FUNCTIONMACRO
         RETURN prefix + datasetname + '.content';
 ENDMACRO;
 
 
-SET OF STRING classificationDatasetNames := ['discrete_GermanDS', 'discrete_houseVoteDS',
+SET OF STRING classificationDatasetNames := ['discrete_GermanDS'];/*, 'discrete_houseVoteDS',
         'discrete_letterrecognitionDS','discrete_liverDS', 'discrete_satimagesDS',
-        'discrete_soybeanDS', 'discrete_VehicleDS']; 
+        'discrete_soybeanDS', 'discrete_VehicleDS']; */
        
 SET OF REAL dtc_performance_scores := [
                                         0.674,
@@ -36,7 +33,7 @@ SET OF REAL dtc_performance_scores := [
 INTEGER c_no_of_elements := COUNT(classificationDatasetNames);
 
 
-dt_results := GenerateCode('Classification.TestDecisionTreeClassifier',  classificationDatasetNames, dtc_performance_scores, c_no_of_elements);
+dt_results := Utils.GenerateCode('Classification.TestDecisionTreeClassifier',  classificationDatasetNames, BenchmarkResults.dtc_performance_scores, c_no_of_elements, 10);
 
 OUTPUT(dt_results, NAMED('Classification_DecisionTree'));
 
